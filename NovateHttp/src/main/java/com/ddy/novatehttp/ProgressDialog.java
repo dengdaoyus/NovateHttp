@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 
 /**
+ * 网络请求提示
  * Created by Administrator on 2017/6/22 0022.
  */
 

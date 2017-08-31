@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/NovateHttp/NovateHttp.iml" filepath="$PROJECT_DIR$/NovateHttp/NovateHttp.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NovateHttpDemo.iml" filepath="$PROJECT_DIR$/NovateHttpDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NovateHttp.iml" filepath="$PROJECT_DIR$/NovateHttp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NovateHttp/NovateHttp-NovateHttp.iml" filepath="$PROJECT_DIR$/NovateHttp/NovateHttp-NovateHttp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
