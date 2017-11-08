@@ -8,6 +8,7 @@ public class StringBean {
 
     private String data;
 
+
     public String getData() {
         return data;
     }
@@ -15,4 +16,5 @@ public class StringBean {
     public void setData(String data) {
         this.data = data;
     }
+
 }

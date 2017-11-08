@@ -21,7 +21,6 @@ import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Context.TELEPHONY_SERVICE;
 import static com.ddy.novatehttp.LLog.e;
-import static com.ddy.novatehttp.novatehttpdemo.config.AvatarConfig.avatar;
 
 /**
  * Created by Administrator on 2017/11/8 0008.
@@ -52,9 +51,10 @@ public class RegisterUtils {
 //                .compose(this.<BaseEntity<List<DynamicBean.DataBean>>>bindToLifecycle())
                 .subscribe(new BaseSubscribe<StringBean>(1,context) {
 
+
                     @Override
-                    public void onSuccess(int what, BaseEntity<StringBean> bean) throws Exception {
-                        Log.e("data",bean.getData().getData());
+                    public void onSuccess(int what, BaseEntity<StringBean> t) throws Exception {
+                        e("data",t.getData().getData());
 //                        registerMousns(context,phoneNumber,"123456",bean.getData().getData());
                     }
 
@@ -65,7 +65,7 @@ public class RegisterUtils {
 
                     @Override
                     public void onFailure(int what, Throwable e, String error, boolean isNetWorkError) throws Exception {
-                        e("onFailure :" + e + "  " + error);
+                        e("onFailure :" + e + "      " + error);
                     }
 
                 });
