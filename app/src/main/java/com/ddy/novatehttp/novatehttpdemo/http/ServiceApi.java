@@ -2,11 +2,8 @@ package com.ddy.novatehttp.novatehttpdemo.http;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ddy.novatehttp.entity.BaseEntity;
-import com.ddy.novatehttp.novatehttpdemo.bean.DynamicBean;
-
-
-import java.util.List;
-
+import com.ddy.novatehttp.novatehttpdemo.bean.RegisterBean;
+import com.ddy.novatehttp.novatehttpdemo.bean.StringBean;
 
 import io.reactivex.Observable;
 import retrofit2.http.Body;
@@ -17,9 +14,22 @@ import retrofit2.http.POST;
  */
 
 public interface ServiceApi {
+
     /**
-     * 生活圈--最新动态
+     * 获取验证码
+     *
+     * @param object
+     * @return
      */
-    @POST("life/dynamic_v34")
-    Observable<BaseEntity<List<DynamicBean.DataBean>>> life_dynamic(@Body JSONObject object);
+    @POST("sms/captcha/send")
+    Observable<BaseEntity<StringBean>> sms_verificationCode_send(@Body JSONObject object);
+
+
+    /**
+     * 注册 ---mousns
+     *
+     * @return
+     */
+    @POST("user/add")
+    Observable<BaseEntity<RegisterBean>> registerMousns(@Body JSONObject object);
 }
