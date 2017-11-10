@@ -108,9 +108,18 @@
         android:id="@+id/gold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/qiniu"
-        android:layout_alignBottom="@+id/qiniu"
-        android:layout_centerHorizontal="true"
+        android:text="gold"
+        android:layout_alignBaseline="@+id/btGold"
+        android:layout_alignBottom="@+id/btGold"
+        android:layout_alignEnd="@+id/token" />
+
+    <Button
+        android:id="@+id/btGold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button7"
+        android:layout_marginTop="19dp"
+        android:layout_toStartOf="@+id/qiniu"
         android:text="gold" />
 
 </RelativeLayout>

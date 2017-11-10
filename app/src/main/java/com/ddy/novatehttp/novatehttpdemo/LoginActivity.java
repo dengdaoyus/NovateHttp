@@ -97,7 +97,7 @@ public class LoginActivity extends BaseActivity {
     private BaseEntity<List<FileMultiBean>> t;
     private int dynamicId = 0;
 
-    @OnClick({R.id.button4, R.id.button5, R.id.button6,R.id.button7, R.id.button8, R.id.delete})
+    @OnClick({R.id.button4, R.id.button5, R.id.button6,R.id.button7, R.id.button8, R.id.btGold,R.id.delete})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.button4://选择帐号
@@ -147,18 +147,8 @@ public class LoginActivity extends BaseActivity {
                                     public void onReleaseSuccess(final int dynamicId) {
                                         Log.e("login", "发布成功");
                                         LoginActivity.this.dynamicId = dynamicId;
-                                        if(dynamicId==0|| userId==0) return;
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                upLoadDynamic. updateActivityEarnTwice(LoginActivity.this,dynamicId,userId, new UpLoadDynamic.UpdateActivityEarnTwiceImp() {
-                                                    @Override
-                                                    public void onEarnTwicSuccess() {
-                                                        tvGold.setText("true");
-                                                    }
-                                                });
-                                            }
-                                        });
+
+
 
 
                                     }
@@ -166,6 +156,26 @@ public class LoginActivity extends BaseActivity {
                             }
                         });
 
+                    }
+                });
+                break;
+            case R.id.btGold://
+                if(dynamicId==0|| userId==0) return;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        upLoadDynamic. updateActivityEarnTwice(LoginActivity.this,dynamicId,userId, new UpLoadDynamic.UpdateActivityEarnTwiceImp() {
+                            @Override
+                            public void onEarnTwicSuccess() {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        tvGold.setText("true");
+                                    }
+                                });
+
+                            }
+                        });
                     }
                 });
                 break;

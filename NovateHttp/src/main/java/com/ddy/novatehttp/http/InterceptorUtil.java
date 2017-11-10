@@ -2,6 +2,8 @@ package com.ddy.novatehttp.http;
 
 
 
+import android.util.Log;
+
 import com.ddy.novatehttp.LLog;
 
 import java.nio.charset.Charset;
@@ -20,12 +22,16 @@ public class InterceptorUtil {
     private static String Token = "";
     public final static Charset UTF8 = Charset.forName("UTF-8");
 
+
+
+
+
     //日志拦截器
     public static HttpLoggingInterceptor LogInterceptor() {
         return new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
-                LLog.d(TAG, "log: " + message);
+                Log.e("打印下返回值", message);
             }
         }).setLevel(HttpLoggingInterceptor.Level.BODY);//设置打印数据的级别
     }

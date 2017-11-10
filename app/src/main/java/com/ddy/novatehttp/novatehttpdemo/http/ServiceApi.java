@@ -55,6 +55,7 @@ public interface ServiceApi {
     @POST("talk/insertTalk")
     Observable<BaseEntity<UpLoadTalkSuccess>> releaseTalk(@Body TalkRequestModel model);
 
+    @POST("rule/updateActivityEarnTwice")
     Observable<BaseEntity<EarnTwiceMoneyBean>> updateActivityEarnTwice(@Body JSONObject object);
 
     /**

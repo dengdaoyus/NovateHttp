@@ -1,6 +1,8 @@
 package com.ddy.novatehttp.novatehttpdemo.help;
 
 
+import android.util.Log;
+
 import com.ddy.novatehttp.http.InterceptorUtil;
 import com.ddy.novatehttp.http.config.HttpConfig;
 import com.ddy.novatehttp.http.gsoncover.CustomGsonConverterFactory;
@@ -9,6 +11,7 @@ import com.ddy.novatehttp.novatehttpdemo.http.ServiceApi;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
@@ -22,7 +25,10 @@ public class HttpHelp {
     private static ServiceApi mServiceApi;
 
     public HttpHelp() {
+
+
         OkHttpClient mOkHttpClient = new OkHttpClient.Builder()
+
                 .connectTimeout(HttpConfig.HTTP_TIME, TimeUnit.SECONDS)
                 .readTimeout(HttpConfig.HTTP_TIME, TimeUnit.SECONDS)
                 .writeTimeout(HttpConfig.HTTP_TIME, TimeUnit.SECONDS)

@@ -4,7 +4,7 @@ package com.ddy.novatehttp.novatehttpdemo.config;
 public class PhoneConfig {
     public static String [] phone=new String[]{
             //浙江
-            "18200381732",
+
             "15888437107",
             "15888529877",
             "15888392382",
