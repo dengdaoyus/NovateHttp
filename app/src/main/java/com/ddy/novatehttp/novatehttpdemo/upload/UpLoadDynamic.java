@@ -31,7 +31,7 @@ public class UpLoadDynamic {
 
     TalkRequestModel model;
 
-    public void getTalkRequestModel(String imgPath,int userId,String content) {
+    public void getTalkRequestModel(String imgPath, int userId, String content) {
         model = new TalkRequestModel();
         model.setCity(GenerateUtils.generateCity());
         model.setLatitude(GenerateUtils.generateLa() + "");
@@ -53,16 +53,15 @@ public class UpLoadDynamic {
     }
 
 
-
-    public void  uploadTalk(final Context context, int userId,String imgPath, String content,BaseEntity<List<FileMultiBean>> t, final UpLoadQiNiuImp upLoadQiNiuImp){
-        getTalkRequestModel(imgPath,userId,content);
+    public void uploadTalk(final Context context, int userId, String imgPath, String content, String key, BaseEntity<List<FileMultiBean>> t, final UpLoadQiNiuImp upLoadQiNiuImp) {
+        getTalkRequestModel(imgPath, userId, content);
         for (int i = 0; i < t.getData().size(); i++) {
-            UploadUtils.getInstance().upload(imgPath, t.getData().get(i).getToken(), t.getData().get(i).getOrder(), new UploadUtils.LoadCallBack() {
+            UploadUtils.getInstance().upload(imgPath, key, t.getData().get(i).getToken(), new UploadUtils.LoadCallBack() {
                 @Override
                 public void onSuccess(String key, String extendData) {
                     if (model != null) {
                         model.getTalkResource().get(0).setUrl(key);
-                        if(upLoadQiNiuImp!=null){
+                        if (upLoadQiNiuImp != null) {
                             upLoadQiNiuImp.upLoadQiniuSuccess(model);
                         }
                     }
@@ -70,10 +69,10 @@ public class UpLoadDynamic {
             });
         }
     }
-    public interface  UpLoadQiNiuImp{
+
+    public interface UpLoadQiNiuImp {
         void upLoadQiniuSuccess(TalkRequestModel mode);
     }
-
 
     //上传服务器
     public void releaseTalk(final Context context, TalkRequestModel mode, final ReleaseSuccessImp releaseSuccessImp) {
@@ -89,8 +88,8 @@ public class UpLoadDynamic {
                     @Override
                     public void onSuccess(int what, final BaseEntity<UpLoadTalkSuccess> t) throws Exception {
                         e("onSuccess", "releaseTalk");
-                        if(t.getData().getRewardType()==1){
-                            if(releaseSuccessImp!=null){
+                        if (t.getData().getRewardType() == 1) {
+                            if (releaseSuccessImp != null) {
                                 releaseSuccessImp.onReleaseSuccess(t.getData().getDynamicId());
                             }
 
@@ -112,20 +111,20 @@ public class UpLoadDynamic {
     }
 
 
-    public interface  ReleaseSuccessImp{
-        void onReleaseSuccess(int dynamicId );
+    public interface ReleaseSuccessImp {
+        void onReleaseSuccess(int dynamicId);
     }
-    //删除
-    private void updateActivityEarnTwice(Context context, int  dynamicId) {
+
+    public void updateActivityEarnTwice(Context context, int dynamicId, int userId, final UpdateActivityEarnTwiceImp updateActivityEarnTwiceImp) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("userId", PreferenceHelper.getString("userId" , "12029"));
-        jsonObject.put("dynamicId",dynamicId);
-            jsonObject.put("earnType","talk");
+        jsonObject.put("userId",userId);
+        jsonObject.put("dynamicId", dynamicId);
+        jsonObject.put("earnType", "talk");
 
         HttpHelp.getInstance().getApi()
                 .updateActivityEarnTwice(jsonObject)
                 .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .compose(((BaseActivity) context).<BaseEntity<EarnTwiceMoneyBean>>bindToLifecycle())
                 .subscribe(new BaseSubscribe<EarnTwiceMoneyBean>(1, context) {
 
@@ -133,6 +132,9 @@ public class UpLoadDynamic {
                     @Override
                     public void onSuccess(int what, final BaseEntity<EarnTwiceMoneyBean> t) throws Exception {
                         e("onSuccess", "updateActivityEarnTwice");
+                        if(updateActivityEarnTwiceImp!=null){
+                            updateActivityEarnTwiceImp.onEarnTwicSuccess();
+                        }
                     }
 
                     @Override
@@ -148,16 +150,18 @@ public class UpLoadDynamic {
                 });
     }
 
+    public  interface  UpdateActivityEarnTwiceImp{
+        void onEarnTwicSuccess();
+    }
 
-
-    public void deleteDynamicDetails(Context context, int  dynamicId, final onDeleteTalkImp onDeleteTalkImp) {
+    //删除
+    public void deleteDynamicDetails(Context context, int dynamicId, final onDeleteTalkImp onDeleteTalkImp) {
         JSONObject object = new JSONObject();
         object.put("talkId", dynamicId);
-
         HttpHelp.getInstance().getApi()
                 .deleteDynamicDetails(object)
                 .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .compose(((BaseActivity) context).<BaseEntity<String>>bindToLifecycle())
                 .subscribe(new BaseSubscribe<String>(1, context) {
 
@@ -165,7 +169,7 @@ public class UpLoadDynamic {
                     @Override
                     public void onSuccess(int what, final BaseEntity<String> t) throws Exception {
                         e("onSuccess", "deleteDynamicDetails");
-                        if(onDeleteTalkImp!=null){
+                        if (onDeleteTalkImp != null) {
                             onDeleteTalkImp.deleteSuccess();
                         }
                     }
@@ -183,7 +187,7 @@ public class UpLoadDynamic {
                 });
     }
 
-    public  interface  onDeleteTalkImp{
+    public interface onDeleteTalkImp {
         void deleteSuccess();
     }
 }

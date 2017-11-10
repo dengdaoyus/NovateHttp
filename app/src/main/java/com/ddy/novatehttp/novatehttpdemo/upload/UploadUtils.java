@@ -3,7 +3,7 @@ package com.ddy.novatehttp.novatehttpdemo.upload;
 
 import android.util.Log;
 
-import com.qiniu.android.common.FixedZone;
+import com.qiniu.android.common.Zone;
 import com.qiniu.android.http.ResponseInfo;
 import com.qiniu.android.storage.Configuration;
 import com.qiniu.android.storage.UpCompletionHandler;
@@ -40,7 +40,8 @@ public class UploadUtils {
                 .putThreshhold(512 * 1024)
                 .connectTimeout(10)
                 .responseTimeout(60)
-                .zone(FixedZone.zone0)        // 设置区域，指定不同区域的上传域名、备用域名、备用IP。
+                .recorder(null)
+                .zone(Zone.zone1)
                 .build();
         uploadManager = new UploadManager(config);
     }
@@ -63,12 +64,12 @@ public class UploadUtils {
                                 }
                                 loadCallBack.onSuccess(key,extendData);
                             }
-                            Log.i("qiniu", "Upload Success");
+                            Log.e("qiniu", "Upload Success");
                         } else {
-                            Log.i("qiniu", "Upload Fail");
+                            Log.e("qiniu", "Upload Fail");
                             //如果失败，这里可以把info信息上报自己的服务器，便于后面分析上传错误原因
                         }
-                        Log.i("qiniu", key + ",\r\n " + info + ",\r\n " + res);
+                        Log.e("qiniu", key + ",\r\n " + info + ",\r\n " + res);
                     }
                 }, null);
     }

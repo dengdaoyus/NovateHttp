@@ -44,7 +44,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/button5"
         android:layout_marginTop="13dp"
-        android:text="上传图片" />
+        android:text="获取token" />
 
     <Button
         android:id="@+id/button8"
@@ -55,12 +55,12 @@
         android:layout_alignParentEnd="true" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textView4"
-        android:layout_toStartOf="@+id/button8"
-        android:text="TextView" />
+        android:text="login"
+        android:layout_below="@+id/button8"
+        android:layout_alignStart="@+id/button8" />
 
     <Button
         android:id="@+id/delete"
@@ -69,5 +69,48 @@
         android:text="delete"
         android:layout_below="@+id/textView5"
         android:layout_alignParentEnd="true" />
+
+    <Button
+        android:id="@+id/button7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/button6"
+        android:layout_marginTop="23dp"
+        android:text="上传七牛" />
+
+    <TextView
+        android:id="@+id/token"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/delete"
+        android:layout_toEndOf="@+id/button6"
+        android:text="token" />
+
+    <TextView
+        android:id="@+id/qiniu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/button7"
+        android:layout_marginBottom="11dp"
+        android:layout_toEndOf="@+id/button6"
+        android:text="qiniu" />
+
+    <TextView
+        android:id="@+id/tv_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="delete"
+        android:layout_below="@+id/delete"
+        android:layout_alignStart="@+id/delete" />
+
+    <TextView
+        android:id="@+id/gold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/qiniu"
+        android:layout_alignBottom="@+id/qiniu"
+        android:layout_centerHorizontal="true"
+        android:text="gold" />
 
 </RelativeLayout>

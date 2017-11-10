@@ -26,7 +26,7 @@ public class GetMultiToken {
     //获取上传token
     public  void getMultiToken(final Context context, final String type, final MultiTokenImp multiTokenImp) {
         JSONArray jsonArray = new JSONArray();
-        String keyType = type + java.util.UUID.randomUUID().toString() + ".jpg";
+        final String keyType = type + java.util.UUID.randomUUID().toString() + ".jpg";
         JSONObject object = new JSONObject();
         object.put("bucket", "image");
         object.put("key", keyType);
@@ -44,7 +44,7 @@ public class GetMultiToken {
                     public void onSuccess(int what, final BaseEntity<List<FileMultiBean>> t) throws Exception {
                         e("onSuccess", "getMultiToken   "+t.getData().get(0).getToken());
                       if(multiTokenImp!=null){
-                          multiTokenImp.multiTokenSuccess(t);
+                          multiTokenImp.multiTokenSuccess(keyType,t);
                       }
                     }
 
@@ -67,6 +67,6 @@ public class GetMultiToken {
                 });
     }
     public interface  MultiTokenImp{
-        void multiTokenSuccess(BaseEntity<List<FileMultiBean>> t);
+        void multiTokenSuccess(String keyType, BaseEntity<List<FileMultiBean>> t);
     }
 }

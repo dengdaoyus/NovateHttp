@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,14 +42,28 @@ public class LoginActivity extends BaseActivity {
     @Bind(R.id.textView5)
     TextView tvPath;//图片地址
 
-    @Bind(R.id.textView)
+    @Bind(R.id.login)
     TextView tvLogin;//是否登录成功
+
+    @Bind(R.id.token)
+    TextView tvToken;//获取token
+
+
+    @Bind(R.id.qiniu)
+    TextView tvqiniu;//上传成功
+
+
+    @Bind(R.id.tv_delete)
+    TextView tv_delete;//删除
+
+    @Bind(R.id.gold)
+    TextView tvGold;//
 
     private LoginData loginData;
     private GetMultiToken getMultiToken;
 
     private UpLoadDynamic upLoadDynamic;
-    int phoneCount = 0, userId;
+    int phoneCount = 0, userId=0;
     private String account, imgPath;
 
     @Override
@@ -79,9 +92,12 @@ public class LoginActivity extends BaseActivity {
         imagePicker.setOutPutY(1000);//保存文件的高度。单位像素
     }
 
+
+    private String keyType;
+    private BaseEntity<List<FileMultiBean>> t;
     private int dynamicId = 0;
 
-    @OnClick({R.id.button4, R.id.button5, R.id.button6, R.id.button8, R.id.delete})
+    @OnClick({R.id.button4, R.id.button5, R.id.button6,R.id.button7, R.id.button8, R.id.delete})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.button4://选择帐号
@@ -107,25 +123,51 @@ public class LoginActivity extends BaseActivity {
                 //获取token
                 getMultiToken.getMultiToken(LoginActivity.this, UploadUtils.FILE_TYPE_TALK, new GetMultiToken.MultiTokenImp() {
                     @Override
-                    public void multiTokenSuccess(BaseEntity<List<FileMultiBean>> t) {
-                        //上传七牛
-                        upLoadDynamic.uploadTalk(LoginActivity.this, userId, imgPath, "考虑到发卡电话费", t, new UpLoadDynamic.UpLoadQiNiuImp() {
-                            @Override
-                            public void upLoadQiniuSuccess(TalkRequestModel mode) {
-                                Log.e("login", "长传七牛成功");
+                    public void multiTokenSuccess(String key, BaseEntity<List<FileMultiBean>> ts) {
+                        keyType=key;
+                        t=ts;
+                        tvToken.setText("true");
+                    }
+                });
 
+                break;
+            case R.id.button7://上传七牛
+                if(t==null|| keyType==null) return;
+                //上传七牛
+                upLoadDynamic.uploadTalk(LoginActivity.this, userId, imgPath, "考虑到发卡电话费", keyType,t, new UpLoadDynamic.UpLoadQiNiuImp() {
+                    @Override
+                    public void upLoadQiniuSuccess(final TalkRequestModel mode) {
+                        Log.e("login", "长传七牛成功");
+                        tvqiniu.setText("长传七牛成功");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
                                 upLoadDynamic.releaseTalk(LoginActivity.this, mode, new UpLoadDynamic.ReleaseSuccessImp() {
                                     @Override
-                                    public void onReleaseSuccess(int dynamicId) {
+                                    public void onReleaseSuccess(final int dynamicId) {
                                         Log.e("login", "发布成功");
                                         LoginActivity.this.dynamicId = dynamicId;
+                                        if(dynamicId==0|| userId==0) return;
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                upLoadDynamic. updateActivityEarnTwice(LoginActivity.this,dynamicId,userId, new UpLoadDynamic.UpdateActivityEarnTwiceImp() {
+                                                    @Override
+                                                    public void onEarnTwicSuccess() {
+                                                        tvGold.setText("true");
+                                                    }
+                                                });
+                                            }
+                                        });
+
+
                                     }
                                 });
                             }
                         });
+
                     }
                 });
-
                 break;
             case R.id.delete:
                 if ( LoginActivity.this.dynamicId == 0) return;
@@ -133,6 +175,7 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void deleteSuccess() {
                         Log.e("login", "删除成功");
+                        tv_delete.setText("删除成功");
                     }
                 });
                 break;
