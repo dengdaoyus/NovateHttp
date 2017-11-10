@@ -36,13 +36,13 @@ public class GetMultiToken {
         httpHelp.getApi()
                 .getMultiToken(jsonArray)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .compose(((BaseActivity) context).<BaseEntity<List<FileMultiBean>>>bindToLifecycle())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .compose(((BaseActivity) context).<BaseEntity<List<FileMultiBean>>>bindToLifecycle())
                 .subscribe(new BaseSubscribe<List<FileMultiBean>>(1, context) {
 
                     @Override
                     public void onSuccess(int what, final BaseEntity<List<FileMultiBean>> t) throws Exception {
-                        e("onSuccess", "getMultiToken   "+t.getData().get(0).getToken());
+                        e("onSuccess", "获取token成功  "+t.getData().get(0).getToken());
                       if(multiTokenImp!=null){
                           multiTokenImp.multiTokenSuccess(keyType,t);
                       }

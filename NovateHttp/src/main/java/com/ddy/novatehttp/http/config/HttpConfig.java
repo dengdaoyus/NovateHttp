@@ -7,8 +7,10 @@ package com.ddy.novatehttp.http.config;
 public class HttpConfig {
 
     //  测试服URL
-    public static final String BASE_URL = "http://139.196.179.138:8084/moyoux-api/";
-    public static int  HTTP_TIME=3000;
+    public static final String BASE_URL_TEST = "http://139.196.179.138:8084/moyoux-api/";
+    public static final String BASE_URL = "https://myapp.immouo.com/";
+
+    public static int  HTTP_TIME=30;
     public static int  SUCCESS_CODE=1;
 
 }

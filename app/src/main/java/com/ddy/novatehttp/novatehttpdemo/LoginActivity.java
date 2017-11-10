@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.ddy.novatehttp.entity.BaseEntity;
 import com.ddy.novatehttp.novatehttpdemo.base.BaseActivity;
+import com.ddy.novatehttp.novatehttpdemo.bean.DiaryMode;
 import com.ddy.novatehttp.novatehttpdemo.bean.FileMultiBean;
 import com.ddy.novatehttp.novatehttpdemo.bean.LoginBean;
 import com.ddy.novatehttp.novatehttpdemo.bean.TalkRequestModel;
@@ -45,25 +46,15 @@ public class LoginActivity extends BaseActivity {
     @Bind(R.id.login)
     TextView tvLogin;//是否登录成功
 
-    @Bind(R.id.token)
-    TextView tvToken;//获取token
-
-
-    @Bind(R.id.qiniu)
-    TextView tvqiniu;//上传成功
-
-
     @Bind(R.id.tv_delete)
     TextView tv_delete;//删除
 
-    @Bind(R.id.gold)
-    TextView tvGold;//
 
     private LoginData loginData;
     private GetMultiToken getMultiToken;
 
     private UpLoadDynamic upLoadDynamic;
-    int phoneCount = 0, userId=0;
+    int phoneCount = 0, userId = 0;
     private String account, imgPath;
 
     @Override
@@ -96,8 +87,10 @@ public class LoginActivity extends BaseActivity {
     private String keyType;
     private BaseEntity<List<FileMultiBean>> t;
     private int dynamicId = 0;
+    private int secretId = 0;
+    private int articleId = 0;
 
-    @OnClick({R.id.button4, R.id.button5, R.id.button6,R.id.button7, R.id.button8, R.id.btGold,R.id.delete})
+    @OnClick({R.id.button4, R.id.button8, R.id.button5, R.id.button6, R.id.delete, R.id.bt_secret, R.id.bt_delete_secret, R.id.bt_article, R.id.bt_delete_article})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.button4://选择帐号
@@ -116,78 +109,25 @@ public class LoginActivity extends BaseActivity {
             case R.id.button5://选择图片
                 Intent intent = new Intent(this, ImageGridActivity.class);
                 startActivityForResult(intent, 101);
-
                 break;
-            case R.id.button6://获取 Token 开始上传
-                if (TextUtils.isEmpty(imgPath) || TextUtils.isEmpty(String.valueOf(userId))) return;
-                //获取token
-                getMultiToken.getMultiToken(LoginActivity.this, UploadUtils.FILE_TYPE_TALK, new GetMultiToken.MultiTokenImp() {
-                    @Override
-                    public void multiTokenSuccess(String key, BaseEntity<List<FileMultiBean>> ts) {
-                        keyType=key;
-                        t=ts;
-                        tvToken.setText("true");
-                    }
-                });
-
-                break;
-            case R.id.button7://上传七牛
-                if(t==null|| keyType==null) return;
-                //上传七牛
-                upLoadDynamic.uploadTalk(LoginActivity.this, userId, imgPath, "考虑到发卡电话费", keyType,t, new UpLoadDynamic.UpLoadQiNiuImp() {
-                    @Override
-                    public void upLoadQiniuSuccess(final TalkRequestModel mode) {
-                        Log.e("login", "长传七牛成功");
-                        tvqiniu.setText("长传七牛成功");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                upLoadDynamic.releaseTalk(LoginActivity.this, mode, new UpLoadDynamic.ReleaseSuccessImp() {
-                                    @Override
-                                    public void onReleaseSuccess(final int dynamicId) {
-                                        Log.e("login", "发布成功");
-                                        LoginActivity.this.dynamicId = dynamicId;
-
-
-
-
-                                    }
-                                });
-                            }
-                        });
-
-                    }
-                });
-                break;
-            case R.id.btGold://
-                if(dynamicId==0|| userId==0) return;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        upLoadDynamic. updateActivityEarnTwice(LoginActivity.this,dynamicId,userId, new UpLoadDynamic.UpdateActivityEarnTwiceImp() {
-                            @Override
-                            public void onEarnTwicSuccess() {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        tvGold.setText("true");
-                                    }
-                                });
-
-                            }
-                        });
-                    }
-                });
+            case R.id.button6://开始上传 说说
+                getTokenTalk();
                 break;
             case R.id.delete:
-                if ( LoginActivity.this.dynamicId == 0) return;
-                upLoadDynamic.deleteDynamicDetails(LoginActivity.this, dynamicId, new UpLoadDynamic.onDeleteTalkImp() {
-                    @Override
-                    public void deleteSuccess() {
-                        Log.e("login", "删除成功");
-                        tv_delete.setText("删除成功");
-                    }
-                });
+                deleteTalk();
+                break;
+
+            case R.id.bt_article://上传文章
+                getTokenArticle();
+                break;
+            case R.id.bt_delete_article://删除文章
+                deleteArticle();
+                break;
+            case R.id.bt_secret://上传秘密
+                upSecret();
+                break;
+            case R.id.bt_delete_secret://删除秘密
+                deleteSecret();
                 break;
         }
     }
@@ -204,5 +144,134 @@ public class LoginActivity extends BaseActivity {
                 Toast.makeText(this, "没有数据", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void getTokenTalk() {
+        if (TextUtils.isEmpty(imgPath) || TextUtils.isEmpty(String.valueOf(userId))) return;
+        //获取token
+        getMultiToken.getMultiToken(LoginActivity.this, UploadUtils.FILE_TYPE_TALK, new GetMultiToken.MultiTokenImp() {
+            @Override
+            public void multiTokenSuccess(String key, BaseEntity<List<FileMultiBean>> ts) {
+                keyType = key;
+                t = ts;
+                upTalkqiniu();
+            }
+        });
+    }
+
+    private void upTalkqiniu() {
+        if (t == null || keyType == null) return;
+        //上传七牛
+        upLoadDynamic.uploadTalk(userId, imgPath, "这只小猫猫在观赏花园", keyType, t, new UpLoadDynamic.UpLoadQiNiuTalkImp() {
+            @Override
+            public void upLoadQiniuSuccess(final TalkRequestModel mode) {
+                insertTalk(mode);
+            }
+        });
+    }
+
+    private void insertTalk(final TalkRequestModel mode) {
+        upLoadDynamic.releaseTalk(LoginActivity.this, mode, new UpLoadDynamic.ReleaseSuccessImp() {
+            @Override
+            public void onReleaseSuccess(boolean b, final int dynamicsId) {
+                dynamicId = dynamicsId;
+                if (b) {
+                    getGold("talk");
+                }
+            }
+        });
+    }
+
+    private void getGold(String earnType) {
+        if (dynamicId == 0 || userId == 0) return;
+        upLoadDynamic.updateActivityEarnTwice(LoginActivity.this, dynamicId, userId, earnType, new UpLoadDynamic.UpdateActivityEarnTwiceImp() {
+            @Override
+            public void onEarnTwicSuccess() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e("login", "获取钱钱成功");
+                    }
+                });
+            }
+        });
+    }
+
+    private void deleteTalk() {
+        if (LoginActivity.this.dynamicId == 0) return;
+        upLoadDynamic.deleteDynamicDetails(LoginActivity.this, dynamicId, new UpLoadDynamic.onDeleteTalkImp() {
+            @Override
+            public void deleteSuccess() {
+                Log.e("login", "删除成功");
+                tv_delete.setText("删除成功");
+            }
+        });
+    }
+
+    private void upSecret() {
+        upLoadDynamic.releaseSecret(LoginActivity.this, userId, "我心中的小秘密", LoginActivity.this.getString(R.string.secret_content), new UpLoadDynamic.ReleaseSuccessImp() {
+            @Override
+            public void onReleaseSuccess(boolean b, int id) {
+                secretId = id;
+//                deleteSecret();
+            }
+        });
+    }
+
+    private void deleteSecret() {
+        if (secretId == 0) return;
+        upLoadDynamic.deleteSecret(LoginActivity.this, userId, secretId, new UpLoadDynamic.onDeleteTalkImp() {
+            @Override
+            public void deleteSuccess() {
+
+            }
+        });
+    }
+
+    private void getTokenArticle() {
+        if (TextUtils.isEmpty(imgPath) || TextUtils.isEmpty(String.valueOf(userId))) return;
+        //获取token
+        getMultiToken.getMultiToken(LoginActivity.this, UploadUtils.DIARY_PIC, new GetMultiToken.MultiTokenImp() {
+            @Override
+            public void multiTokenSuccess(String key, BaseEntity<List<FileMultiBean>> ts) {
+                keyType = key;
+                t = ts;
+                upArticleqiniu();
+            }
+        });
+    }
+
+    private void upArticleqiniu() {
+        if (t == null || keyType == null) return;
+        //上传七牛
+        upLoadDynamic.releaseArticle(userId, imgPath, "这只小猫猫在观赏花园", keyType, t, new UpLoadDynamic.UpLoadQiNiuArtilceImp() {
+            @Override
+            public void upLoadQiniuSuccess(final DiaryMode mode) {
+                insertArticle(mode);
+            }
+        });
+    }
+
+    private void insertArticle(final DiaryMode mode) {
+        upLoadDynamic.releaseArticle(LoginActivity.this, mode, new UpLoadDynamic.ReleaseSuccessImp() {
+            @Override
+            public void onReleaseSuccess(boolean b, final int id) {
+                articleId = id;
+                if (b) {
+                    getGold("diary");
+                }
+
+            }
+        });
+    }
+
+    private void deleteArticle() {
+        if (articleId == 0) return;
+        upLoadDynamic.deleteArticle(LoginActivity.this, userId, articleId, new UpLoadDynamic.onDeleteTalkImp() {
+            @Override
+            public void deleteSuccess() {
+
+            }
+        });
     }
 }

@@ -9,6 +9,7 @@ import com.ddy.novatehttp.novatehttpdemo.bean.EarnTwiceMoneyBean;
 import com.ddy.novatehttp.novatehttpdemo.bean.FileMultiBean;
 import com.ddy.novatehttp.novatehttpdemo.bean.LoginBean;
 import com.ddy.novatehttp.novatehttpdemo.bean.RegisterBean;
+import com.ddy.novatehttp.novatehttpdemo.bean.SecretMode;
 import com.ddy.novatehttp.novatehttpdemo.bean.TalkRequestModel;
 import com.ddy.novatehttp.novatehttpdemo.bean.UpLoadTalkSuccess;
 
@@ -66,14 +67,34 @@ public interface ServiceApi {
     @POST("talk/updateTalkState")
     Observable<BaseEntity<String>>  deleteDynamicDetails(@Body JSONObject object);
 
+    //登录
+    @POST("user/checkV360")
+    Observable<BaseEntity<LoginBean>> userLogin(@Body JSONObject jsonObject);
+
+    /**
+     * 发布秘密
+     */
+    @POST("secret/insert")
+    Observable<BaseEntity<UpLoadTalkSuccess>> secret_insert(@Body SecretMode mode);
+
+
+    /**
+     * 删除秘密
+     */
+    @POST("secret/updateSecretState")
+    Observable<BaseEntity<String>> secret_updateSecretState(@Body JSONObject object);
+
+
+
     /**
      * 发布日记
      */
     @POST("diary/insert")
-    Observable<BaseEntity<String>> diary_insert(@Body DiaryMode mode);
+    Observable<BaseEntity<UpLoadTalkSuccess>> diary_insert(@Body DiaryMode mode);
 
-
-    //登录
-    @POST("user/checkV360")
-    Observable<BaseEntity<LoginBean>> userLogin(@Body JSONObject jsonObject);
+    /**
+     * 删除文章
+     */
+    @POST("life/updateDiaryState")
+    Observable<BaseEntity<String>> life_updateDiaryState(@Body JSONObject object);
 }

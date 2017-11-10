@@ -5,19 +5,18 @@ import android.content.Context;
 import com.alibaba.fastjson.JSONObject;
 import com.ddy.novatehttp.entity.BaseEntity;
 import com.ddy.novatehttp.http.base.BaseSubscribe;
-import com.ddy.novatehttp.novatehttpdemo.base.BaseActivity;
+import com.ddy.novatehttp.novatehttpdemo.bean.DiaryMode;
 import com.ddy.novatehttp.novatehttpdemo.bean.EarnTwiceMoneyBean;
 import com.ddy.novatehttp.novatehttpdemo.bean.FileMultiBean;
+import com.ddy.novatehttp.novatehttpdemo.bean.SecretMode;
 import com.ddy.novatehttp.novatehttpdemo.bean.TalkRequestModel;
 import com.ddy.novatehttp.novatehttpdemo.bean.UpLoadTalkSuccess;
 import com.ddy.novatehttp.novatehttpdemo.help.HttpHelp;
 import com.ddy.novatehttp.novatehttpdemo.utils.GenerateUtils;
-import com.ddy.novatehttp.novatehttpdemo.utils.PreferenceHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.ddy.novatehttp.LLog.e;
@@ -29,17 +28,17 @@ import static com.ddy.novatehttp.LLog.e;
 public class UpLoadDynamic {
 
 
-    TalkRequestModel model;
+    private TalkRequestModel talkRequestModel;
 
-    public void getTalkRequestModel(String imgPath, int userId, String content) {
-        model = new TalkRequestModel();
-        model.setCity(GenerateUtils.generateCity());
-        model.setLatitude(GenerateUtils.generateLa() + "");
-        model.setLongitude(GenerateUtils.generateLo() + "");
-        model.setContent(content);
-        model.setMediaType("3");//说说
-        model.setTalkResource(onAssembleData(imgPath));
-        model.setCreatorId(String.valueOf(userId));
+    private void getTalkRequestModel(String imgPath, int userId, String content) {
+        talkRequestModel = new TalkRequestModel();
+        talkRequestModel.setCity(GenerateUtils.generateCity());
+        talkRequestModel.setLatitude(GenerateUtils.generateLa() + "");
+        talkRequestModel.setLongitude(GenerateUtils.generateLo() + "");
+        talkRequestModel.setContent(content);
+        talkRequestModel.setMediaType("3");//说说
+        talkRequestModel.setTalkResource(onAssembleData(imgPath));
+        talkRequestModel.setCreatorId(String.valueOf(userId));
     }
 
     //组装列表数据
@@ -53,16 +52,17 @@ public class UpLoadDynamic {
     }
 
 
-    public void uploadTalk(final Context context, int userId, String imgPath, String content, String key, BaseEntity<List<FileMultiBean>> t, final UpLoadQiNiuImp upLoadQiNiuImp) {
+    public void uploadTalk( int userId, String imgPath, String content, String key, BaseEntity<List<FileMultiBean>> t, final UpLoadQiNiuTalkImp upLoadQiNiuImp) {
         getTalkRequestModel(imgPath, userId, content);
         for (int i = 0; i < t.getData().size(); i++) {
             UploadUtils.getInstance().upload(imgPath, key, t.getData().get(i).getToken(), new UploadUtils.LoadCallBack() {
                 @Override
                 public void onSuccess(String key, String extendData) {
-                    if (model != null) {
-                        model.getTalkResource().get(0).setUrl(key);
+                    if (talkRequestModel != null) {
+                        talkRequestModel.getTalkResource().get(0).setUrl(key);
                         if (upLoadQiNiuImp != null) {
-                            upLoadQiNiuImp.upLoadQiniuSuccess(model);
+                            e("onSuccess", "长传七牛成功");
+                            upLoadQiNiuImp.upLoadQiniuSuccess(talkRequestModel);
                         }
                     }
                 }
@@ -70,7 +70,7 @@ public class UpLoadDynamic {
         }
     }
 
-    public interface UpLoadQiNiuImp {
+    public interface UpLoadQiNiuTalkImp {
         void upLoadQiniuSuccess(TalkRequestModel mode);
     }
 
@@ -80,20 +80,16 @@ public class UpLoadDynamic {
         HttpHelp.getInstance().getApi()
                 .releaseTalk(mode)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .compose(((BaseActivity) context).<BaseEntity<UpLoadTalkSuccess>>bindToLifecycle())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .compose(((BaseActivity) context).<BaseEntity<UpLoadTalkSuccess>>bindToLifecycle())
                 .subscribe(new BaseSubscribe<UpLoadTalkSuccess>(1, context) {
-
 
                     @Override
                     public void onSuccess(int what, final BaseEntity<UpLoadTalkSuccess> t) throws Exception {
                         e("onSuccess", "releaseTalk");
-                        if (t.getData().getRewardType() == 1) {
                             if (releaseSuccessImp != null) {
-                                releaseSuccessImp.onReleaseSuccess(t.getData().getDynamicId());
+                                releaseSuccessImp.onReleaseSuccess((t.getData().getRewardType() == 1),t.getData().getDynamicId());
                             }
-
-                        }
 
                     }
 
@@ -112,27 +108,24 @@ public class UpLoadDynamic {
 
 
     public interface ReleaseSuccessImp {
-        void onReleaseSuccess(int dynamicId);
+        void onReleaseSuccess(boolean b,int dynamicId);
     }
 
-    public void updateActivityEarnTwice(Context context, int dynamicId, int userId, final UpdateActivityEarnTwiceImp updateActivityEarnTwiceImp) {
+    public void updateActivityEarnTwice(Context context, int dynamicId, int userId, String earnType, final UpdateActivityEarnTwiceImp updateActivityEarnTwiceImp) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("userId",userId);
+        jsonObject.put("userId", userId);
         jsonObject.put("dynamicId", dynamicId);
-        jsonObject.put("earnType", "talk");
+        jsonObject.put("earnType", earnType);
 
         HttpHelp.getInstance().getApi()
                 .updateActivityEarnTwice(jsonObject)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .compose(((BaseActivity) context).<BaseEntity<EarnTwiceMoneyBean>>bindToLifecycle())
                 .subscribe(new BaseSubscribe<EarnTwiceMoneyBean>(1, context) {
-
 
                     @Override
                     public void onSuccess(int what, final BaseEntity<EarnTwiceMoneyBean> t) throws Exception {
-                        e("onSuccess", "updateActivityEarnTwice");
-                        if(updateActivityEarnTwiceImp!=null){
+                        e("onSuccess", "获取钱钱成功");
+                        if (updateActivityEarnTwiceImp != null) {
                             updateActivityEarnTwiceImp.onEarnTwicSuccess();
                         }
                     }
@@ -150,7 +143,7 @@ public class UpLoadDynamic {
                 });
     }
 
-    public  interface  UpdateActivityEarnTwiceImp{
+    public interface UpdateActivityEarnTwiceImp {
         void onEarnTwicSuccess();
     }
 
@@ -161,14 +154,11 @@ public class UpLoadDynamic {
         HttpHelp.getInstance().getApi()
                 .deleteDynamicDetails(object)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .compose(((BaseActivity) context).<BaseEntity<String>>bindToLifecycle())
                 .subscribe(new BaseSubscribe<String>(1, context) {
-
 
                     @Override
                     public void onSuccess(int what, final BaseEntity<String> t) throws Exception {
-                        e("onSuccess", "deleteDynamicDetails");
+                        e("onSuccess", "删除说说成功");
                         if (onDeleteTalkImp != null) {
                             onDeleteTalkImp.deleteSuccess();
                         }
@@ -190,4 +180,200 @@ public class UpLoadDynamic {
     public interface onDeleteTalkImp {
         void deleteSuccess();
     }
+
+    public void releaseSecret(Context context, int userId, String title, String content, final ReleaseSuccessImp successSecretImp) {
+        SecretMode mode = new SecretMode();
+        mode.setLocation(GenerateUtils.generateCity());
+        mode.setSecretTitle(title);
+        mode.setUserId(userId);
+        mode.setContents(onAssembleDataSecret(content));
+
+        HttpHelp.getInstance().getApi()
+                .secret_insert(mode)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new BaseSubscribe<UpLoadTalkSuccess>(1, context) {
+
+                    @Override
+                    public void onSuccess(int what, final BaseEntity<UpLoadTalkSuccess> t) throws Exception {
+                        e("onSuccess", "发布秘密成功");
+                        if (successSecretImp != null) {
+                            successSecretImp.onReleaseSuccess(false,t.getData().getSercretId());
+                        }
+                    }
+
+                    @Override
+                    public void onCodeError(int what, int code, final String errorMessage) throws Exception {
+                        e("onCodeError :" + code + " " + errorMessage);
+                    }
+
+                    @Override
+                    public void onFailure(int what, Throwable e, String error, boolean isNetWorkError) throws Exception {
+                        e("onFailure :" + e + "      " + error);
+                    }
+
+                });
+    }
+
+
+    //组装列表数据
+    private List<SecretMode.SecretContentInsertModel> onAssembleDataSecret(String content) {
+        List<SecretMode.SecretContentInsertModel> secretContentInsertModel = new ArrayList<>();
+        secretContentInsertModel.clear();
+        SecretMode.SecretContentInsertModel beanTxt = new SecretMode.SecretContentInsertModel();
+        beanTxt.setTextOrPicture(content);
+        beanTxt.setContentType(0);
+        beanTxt.setSorting(1);
+        secretContentInsertModel.add(beanTxt);
+        return secretContentInsertModel;
+    }
+
+
+    public void deleteSecret(Context context, int userId, int secretId, final onDeleteTalkImp onDeleteTalkImp) {
+        JSONObject object = new JSONObject();
+        object.put("secretId", secretId);
+        object.put("userId", userId);
+        HttpHelp.getInstance().getApi()
+                .secret_updateSecretState(object)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new BaseSubscribe<String>(1, context) {
+
+
+                    @Override
+                    public void onSuccess(int what, final BaseEntity<String> t) throws Exception {
+                        e("onSuccess", "删除秘密成功");
+                        if (onDeleteTalkImp != null) {
+                            onDeleteTalkImp.deleteSuccess();
+                        }
+                    }
+
+                    @Override
+                    public void onCodeError(int what, int code, final String errorMessage) throws Exception {
+                        e("onCodeError :" + code + " " + errorMessage);
+                    }
+
+                    @Override
+                    public void onFailure(int what, Throwable e, String error, boolean isNetWorkError) throws Exception {
+                        e("onFailure :" + e + "      " + error);
+                    }
+
+                });
+    }
+
+    private DiaryMode diaryMode;
+
+    private void onArticleMode(int userId, String content, String key) {
+        diaryMode = new DiaryMode();
+        diaryMode.setCity(GenerateUtils.generateCity());
+        diaryMode.setDiaryTitle("送上一篇美文");
+        diaryMode.setCreatorId(String.valueOf(userId));
+        diaryMode.setContents(onAssembleData(content, key));
+    }
+
+    //组装列表数据
+    private List<DiaryMode.DiaryContentInsertDomain> onAssembleData(String content, String path) {
+        List<DiaryMode.DiaryContentInsertDomain> diaryContentInsertDomain = new ArrayList<>();
+        int index = 0;
+
+
+        DiaryMode.DiaryContentInsertDomain bean = new DiaryMode.DiaryContentInsertDomain();
+        bean.setTextOrPicture(content);
+        bean.setContenType(0);
+        index++;
+        bean.setSorting(index);
+        diaryContentInsertDomain.add(bean);
+
+        DiaryMode.DiaryContentInsertDomain beanImg = new DiaryMode.DiaryContentInsertDomain();
+        beanImg.setTextOrPicture(path);
+        beanImg.setContenType(1);
+        index++;
+        beanImg.setSorting(index);
+        diaryContentInsertDomain.add(beanImg);
+        return diaryContentInsertDomain;
+    }
+
+    public void releaseArticle(int userId, String imgPath, String content, String key, BaseEntity<List<FileMultiBean>> t, final UpLoadQiNiuArtilceImp upLoadQiNiuImp) {
+        onArticleMode(userId, content, imgPath);
+        for (int i = 0; i < t.getData().size(); i++) {
+            UploadUtils.getInstance().upload(imgPath, key, t.getData().get(i).getToken(), new UploadUtils.LoadCallBack() {
+                @Override
+                public void onSuccess(String key, String extendData) {
+                    e("onSuccess", "长传七牛成功");
+                    if (diaryMode != null) {
+                        diaryMode.getContents().get(1).setExtendData(extendData);
+                        diaryMode.getContents().get(1).setTextOrPicture(key);
+                        if (upLoadQiNiuImp != null) {
+                            upLoadQiNiuImp.upLoadQiniuSuccess(diaryMode);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    public interface UpLoadQiNiuArtilceImp {
+        void upLoadQiniuSuccess(DiaryMode mode);
+    }
+
+    //上传服务器
+    public void releaseArticle(final Context context, DiaryMode mode, final ReleaseSuccessImp releaseSuccessImp) {
+
+        HttpHelp.getInstance().getApi()
+                .diary_insert(mode)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new BaseSubscribe<UpLoadTalkSuccess>(1, context) {
+
+                    @Override
+                    public void onSuccess(int what, final BaseEntity<UpLoadTalkSuccess> t) throws Exception {
+                        e("onSuccess", "releaseTalk");
+                        if (releaseSuccessImp != null) {
+                            releaseSuccessImp.onReleaseSuccess((t.getData().getRewardType() == 1),t.getData().getDiaryId());
+                        }
+                    }
+
+                    @Override
+                    public void onCodeError(int what, int code, final String errorMessage) throws Exception {
+                        e("onCodeError :" + code + " " + errorMessage);
+                    }
+
+                    @Override
+                    public void onFailure(int what, Throwable e, String error, boolean isNetWorkError) throws Exception {
+                        e("onFailure :" + e + "      " + error);
+                    }
+
+                });
+    }
+
+    //删除文章
+    public void deleteArticle(Context context, int userId, int diaryId, final onDeleteTalkImp onDeleteTalkImp) {
+        JSONObject object = new JSONObject();
+        object.put("userId",userId);
+        object.put("diaryId", diaryId);
+        HttpHelp.getInstance().getApi()
+                .life_updateDiaryState(object)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new BaseSubscribe<String>(1, context) {
+
+
+                    @Override
+                    public void onSuccess(int what, final BaseEntity<String> t) throws Exception {
+                        e("onSuccess", "删除文章成功");
+                        if (onDeleteTalkImp != null) {
+                            onDeleteTalkImp.deleteSuccess();
+                        }
+                    }
+
+                    @Override
+                    public void onCodeError(int what, int code, final String errorMessage) throws Exception {
+                        e("onCodeError :" + code + " " + errorMessage);
+                    }
+
+                    @Override
+                    public void onFailure(int what, Throwable e, String error, boolean isNetWorkError) throws Exception {
+                        e("onFailure :" + e + "      " + error);
+                    }
+
+                });
+    }
+
+
 }
