@@ -21,7 +21,7 @@ public class HttpHelp {
     private static HttpHelp mHttpHelp;
     private static ServiceApi mServiceApi;
 
-    private HttpHelp() {
+    public HttpHelp() {
         OkHttpClient mOkHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(HttpConfig.HTTP_TIME, TimeUnit.SECONDS)
                 .readTimeout(HttpConfig.HTTP_TIME, TimeUnit.SECONDS)

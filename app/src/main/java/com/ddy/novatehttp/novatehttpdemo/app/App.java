@@ -3,21 +3,21 @@ package com.ddy.novatehttp.novatehttpdemo.app;
 import android.app.Activity;
 import android.content.Context;
 
+import com.ddy.novatehttp.novatehttpdemo.upload.UploadUtils;
+import com.ddy.novatehttp.novatehttpdemo.utils.PreferenceHelper;
+
 
 /**
  * Created by Administrator on 2017/6/28 0028.
  */
 
 public class App extends AbsSuperApplication {
-    public static App managerApplication = null;
+    public static App instance = null;
 
-    private static class MyApp {
-        private final static App singleton = new App();
-    }
+
 
     public static App getInstance() {
-
-        return MyApp.singleton;
+        return instance;
     }
 
     @Override
@@ -35,6 +35,11 @@ public class App extends AbsSuperApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        instance=this;
+        //初始化 七牛云上传工具
+        UploadUtils.getInstance().init();
+        //初始化 Preference
+        PreferenceHelper.init(instance);
     }
 
     @Override

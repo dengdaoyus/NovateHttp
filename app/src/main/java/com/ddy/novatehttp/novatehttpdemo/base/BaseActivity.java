@@ -16,7 +16,7 @@ public class BaseActivity extends IBaseActivity {
         super.onCreate(savedInstanceState);
     }
 
-    protected void Toast(final String msg) {
+    public void Toast(final String msg) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -26,7 +26,7 @@ public class BaseActivity extends IBaseActivity {
 
     }
 
-    protected void Toast(int msg) {
+    public void Toast(int msg) {
         Toast(String.valueOf(msg));
 
     }

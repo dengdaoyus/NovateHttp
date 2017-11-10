@@ -4,6 +4,7 @@ package com.ddy.novatehttp.http.base;
 import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.net.ParseException;
+import android.os.NetworkOnMainThreadException;
 
 import com.alibaba.fastjson.JSONException;
 import com.ddy.novatehttp.LLog;
@@ -76,6 +77,8 @@ public abstract class BaseSubscribe<T> implements Observer<BaseEntity<T>> {
                 } else {
                     onFailure(what, e,"自定义异常，其他错误", false);
                 }
+            } else if(e instanceof NetworkOnMainThreadException){
+                onFailure(what, e,"不能在主线程中访问网络", false);
             } else {
                 onFailure(what, e,"未知错误", false);
             }

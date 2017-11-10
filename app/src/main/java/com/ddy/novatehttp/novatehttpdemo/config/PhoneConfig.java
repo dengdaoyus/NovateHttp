@@ -4,10 +4,11 @@ package com.ddy.novatehttp.novatehttpdemo.config;
 public class PhoneConfig {
     public static String [] phone=new String[]{
             //浙江
-            "15888437103",
-            "15888529878",
-            "15888392381",
-            "15888159017",
+            "18200381732",
+            "15888437107",
+            "15888529877",
+            "15888392382",
+            "15888159019",
             "15888105110",
             "15888153306",
             "15888807503",

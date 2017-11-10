@@ -1,19 +1,23 @@
 package com.ddy.novatehttp.novatehttpdemo.http;
 
 
-
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ddy.novatehttp.entity.BaseEntity;
+import com.ddy.novatehttp.novatehttpdemo.bean.DiaryMode;
+import com.ddy.novatehttp.novatehttpdemo.bean.EarnTwiceMoneyBean;
+import com.ddy.novatehttp.novatehttpdemo.bean.FileMultiBean;
+import com.ddy.novatehttp.novatehttpdemo.bean.LoginBean;
 import com.ddy.novatehttp.novatehttpdemo.bean.RegisterBean;
-import com.ddy.novatehttp.novatehttpdemo.bean.StringBean;
+import com.ddy.novatehttp.novatehttpdemo.bean.TalkRequestModel;
+import com.ddy.novatehttp.novatehttpdemo.bean.UpLoadTalkSuccess;
+
+import java.util.List;
 
 import io.reactivex.Observable;
+import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
-
-/**
- * Created by Administrator on 2017/6/22 0022.
- */
 
 public interface ServiceApi {
 
@@ -24,7 +28,7 @@ public interface ServiceApi {
      * @return
      */
     @POST("sms/captcha/send")
-    Observable<BaseEntity<StringBean>> sms_verificationCode_send(@Body JSONObject object);
+    Observable<BaseEntity<String>> sms_verificationCode_send(@Body JSONObject object);
 
 
     /**
@@ -34,4 +38,41 @@ public interface ServiceApi {
      */
     @POST("user/add")
     Observable<BaseEntity<RegisterBean>> registerMousns(@Body JSONObject object);
+
+
+    /**
+     * 上传文件资源（多张）
+     */
+    @POST("upload/tokens")
+    Observable<BaseEntity<List<FileMultiBean>>> getMultiToken(@Body JSONArray object);
+
+    /**
+     * 发布说说
+     *
+     * @param model
+     * @return
+     */
+    @POST("talk/insertTalk")
+    Observable<BaseEntity<UpLoadTalkSuccess>> releaseTalk(@Body TalkRequestModel model);
+
+    Observable<BaseEntity<EarnTwiceMoneyBean>> updateActivityEarnTwice(@Body JSONObject object);
+
+    /**
+     * 删除说说！
+     *
+     * @return
+     */
+    @POST("talk/updateTalkState")
+    Observable<BaseEntity<String>>  deleteDynamicDetails(@Body JSONObject object);
+
+    /**
+     * 发布日记
+     */
+    @POST("diary/insert")
+    Observable<BaseEntity<String>> diary_insert(@Body DiaryMode mode);
+
+
+    //登录
+    @POST("user/checkV360")
+    Observable<BaseEntity<LoginBean>> userLogin(@Body JSONObject jsonObject);
 }
