@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,8 +38,8 @@ import butterknife.OnClick;
 public class LoginActivity extends BaseActivity {
 
 
-    @Bind(R.id.textView4)
-    TextView tvAccount;//帐号
+    @Bind(R.id.et_phone)
+    EditText tvAccount;//帐号
 
     @Bind(R.id.textView5)
     TextView tvPath;//图片地址
@@ -98,6 +99,8 @@ public class LoginActivity extends BaseActivity {
                 tvAccount.setText(account);
                 break;
             case R.id.button8://登录
+                account=tvAccount.getText().toString().trim();
+                if(TextUtils.isEmpty(account))return;
                 loginData.userLogin(LoginActivity.this, account, new LoginData.LoginImp() {
                     @Override
                     public void loginSuccess(LoginBean loginBean) {
