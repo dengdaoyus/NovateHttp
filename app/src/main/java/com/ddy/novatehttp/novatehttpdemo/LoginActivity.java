@@ -91,14 +91,14 @@ public class LoginActivity extends BaseActivity {
     private int secretId = 0;
     private int articleId = 0;
 
-    @OnClick({R.id.button4, R.id.button8, R.id.button5, R.id.button6, R.id.delete, R.id.bt_secret, R.id.bt_delete_secret, R.id.bt_article, R.id.bt_delete_article})
+    @OnClick({R.id.select_phone, R.id.bg_login, R.id.get_pic, R.id.bt_upload_talk, R.id.delete, R.id.bt_secret, R.id.bt_delete_secret, R.id.bt_article, R.id.bt_delete_article,R.id.bt_release_secret})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.button4://选择帐号
+            case R.id.select_phone://选择帐号
                 account = GenerateUtils.generatePhone(phoneCount);
                 tvAccount.setText(account);
                 break;
-            case R.id.button8://登录
+            case R.id.bg_login://登录
                 account=tvAccount.getText().toString().trim();
                 if(TextUtils.isEmpty(account))return;
                 loginData.userLogin(LoginActivity.this, account, new LoginData.LoginImp() {
@@ -109,17 +109,16 @@ public class LoginActivity extends BaseActivity {
                     }
                 });
                 break;
-            case R.id.button5://选择图片
+            case R.id.get_pic://选择图片
                 Intent intent = new Intent(this, ImageGridActivity.class);
                 startActivityForResult(intent, 101);
                 break;
-            case R.id.button6://开始上传 说说
+            case R.id.bt_upload_talk://开始上传 说说
                 getTokenTalk();
                 break;
             case R.id.delete:
                 deleteTalk();
                 break;
-
             case R.id.bt_article://上传文章
                 getTokenArticle();
                 break;
@@ -131,6 +130,10 @@ public class LoginActivity extends BaseActivity {
                 break;
             case R.id.bt_delete_secret://删除秘密
                 deleteSecret();
+                break;
+
+            case R.id.bt_release_secret:
+                startActivity(new Intent(this,ReleaseSecretActivity.class));
                 break;
         }
     }

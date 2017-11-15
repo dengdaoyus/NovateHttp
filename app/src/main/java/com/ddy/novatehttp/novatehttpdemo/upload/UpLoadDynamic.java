@@ -17,6 +17,7 @@ import com.ddy.novatehttp.novatehttpdemo.utils.GenerateUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.ddy.novatehttp.LLog.e;
@@ -191,6 +192,7 @@ public class UpLoadDynamic {
         HttpHelp.getInstance().getApi()
                 .secret_insert(mode)
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BaseSubscribe<UpLoadTalkSuccess>(1, context) {
 
                     @Override
@@ -235,6 +237,7 @@ public class UpLoadDynamic {
         HttpHelp.getInstance().getApi()
                 .secret_updateSecretState(object)
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BaseSubscribe<String>(1, context) {
 
 

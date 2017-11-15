@@ -8,6 +8,8 @@
     <!-- 相机权限 -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
         android:name=".app.App"
         android:allowBackup="true"
@@ -29,6 +31,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ReleaseSecretActivity"
             android:screenOrientation="portrait"/>
     </application>
 

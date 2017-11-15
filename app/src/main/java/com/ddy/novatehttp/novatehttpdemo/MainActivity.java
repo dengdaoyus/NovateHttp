@@ -6,13 +6,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.ddy.novatehttp.novatehttpdemo.base.BaseActivity;
+import com.ddy.novatehttp.novatehttpdemo.config.PhoneConfig;
 import com.ddy.novatehttp.novatehttpdemo.utils.GenerateUtils;
 
 public class MainActivity extends BaseActivity implements RegisterUtils.GetCodeImp, RegisterUtils.RegisterImp {
      RegisterUtils registerUtils;
     TextView tvCode;
     TextView tvRegister;
-    int codeInt=0,registerCode=0,count= 0;
+    int count= 0;
 
 
     @Override
@@ -22,12 +23,15 @@ public class MainActivity extends BaseActivity implements RegisterUtils.GetCodeI
        registerUtils=new RegisterUtils();
         tvCode= (TextView) findViewById(R.id.textView2);
         tvRegister= (TextView) findViewById(R.id.textView3);
+
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                     registerUtils.sms_captcha_send(MainActivity.this,count,1,MainActivity.this);
             }
         });
+
+
         findViewById(R.id.login).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,8 +46,7 @@ public class MainActivity extends BaseActivity implements RegisterUtils.GetCodeI
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                codeInt++;
-                tvCode.setText(String.valueOf(codeInt));
+                tvCode.setText("获取验证码成功： "+String.valueOf(count));
                 registerUtils.registerMousns(MainActivity.this,GenerateUtils.generatePhone(count),"123456",code,MainActivity.this);
             }
         });
@@ -51,8 +54,9 @@ public class MainActivity extends BaseActivity implements RegisterUtils.GetCodeI
 
     @Override
     public void code() {
-        registerCode++;
         count++;
-        tvRegister.setText(String.valueOf(registerCode));
+        tvRegister.setText("注册成功： "+String.valueOf(count));
+        if(count> PhoneConfig.phone.length) return;
+        registerUtils.sms_captcha_send(MainActivity.this,count,1,MainActivity.this);
     }
 }
