@@ -36,8 +36,7 @@ public class GetMultiToken {
         httpHelp.getApi()
                 .getMultiToken(jsonArray)
                 .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .compose(((BaseActivity) context).<BaseEntity<List<FileMultiBean>>>bindToLifecycle())
+                                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BaseSubscribe<List<FileMultiBean>>(1, context) {
 
                     @Override

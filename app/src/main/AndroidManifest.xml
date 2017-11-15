@@ -35,6 +35,12 @@
 
         <activity android:name=".ReleaseSecretActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".ReleaseArticleActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ReleaseTalkActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

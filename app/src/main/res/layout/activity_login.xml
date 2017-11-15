@@ -164,4 +164,20 @@
         android:layout_alignParentStart="true"
         android:text="发布SECRET" />
 
+    <Button
+        android:id="@+id/bt_release_article"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="发布ARTICLE"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/bt_release_talk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/delete_secret"
+        android:text="发布talk" />
+
 </RelativeLayout>

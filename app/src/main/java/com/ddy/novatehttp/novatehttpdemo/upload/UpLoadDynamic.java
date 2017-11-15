@@ -121,6 +121,7 @@ public class UpLoadDynamic {
         HttpHelp.getInstance().getApi()
                 .updateActivityEarnTwice(jsonObject)
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BaseSubscribe<EarnTwiceMoneyBean>(1, context) {
 
                     @Override
@@ -155,6 +156,7 @@ public class UpLoadDynamic {
         HttpHelp.getInstance().getApi()
                 .deleteDynamicDetails(object)
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BaseSubscribe<String>(1, context) {
 
                     @Override
@@ -323,6 +325,7 @@ public class UpLoadDynamic {
         HttpHelp.getInstance().getApi()
                 .diary_insert(mode)
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BaseSubscribe<UpLoadTalkSuccess>(1, context) {
 
                     @Override
@@ -354,6 +357,7 @@ public class UpLoadDynamic {
         HttpHelp.getInstance().getApi()
                 .life_updateDiaryState(object)
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BaseSubscribe<String>(1, context) {
 
 

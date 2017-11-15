@@ -91,7 +91,8 @@ public class LoginActivity extends BaseActivity {
     private int secretId = 0;
     private int articleId = 0;
 
-    @OnClick({R.id.select_phone, R.id.bg_login, R.id.get_pic, R.id.bt_upload_talk, R.id.delete, R.id.bt_secret, R.id.bt_delete_secret, R.id.bt_article, R.id.bt_delete_article,R.id.bt_release_secret})
+    @OnClick({R.id.select_phone, R.id.bg_login, R.id.get_pic, R.id.bt_upload_talk, R.id.delete, R.id.bt_secret, R.id.bt_delete_secret, R.id.bt_article,
+            R.id.bt_delete_article,R.id.bt_release_secret,R.id.bt_release_article,R.id.bt_release_talk})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.select_phone://选择帐号
@@ -134,6 +135,12 @@ public class LoginActivity extends BaseActivity {
 
             case R.id.bt_release_secret:
                 startActivity(new Intent(this,ReleaseSecretActivity.class));
+                break;
+            case R.id.bt_release_article:
+                startActivity(new Intent(this,ReleaseArticleActivity.class));
+                break;
+            case R.id.bt_release_talk:
+                startActivity(new Intent(this,ReleaseTalkActivity.class));
                 break;
         }
     }
